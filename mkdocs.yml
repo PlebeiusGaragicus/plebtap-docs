@@ -1,0 +1,44 @@
+site_name: PlebTap
+site_description: A Bitcoin Lightning and Ecash wallet with Nostr integration
+site_url: https://PlebeiusGaragicus.github.io/plebtap/
+repo_url: https://github.com/PlebeiusGaragicus/plebtap
+repo_name: plebtap
+
+theme:
+  name: material
+  palette:
+    - scheme: slate
+      primary: orange
+      accent: orange
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+    - scheme: default
+      primary: orange
+      accent: orange
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+  features:
+    - navigation.instant
+    - navigation.tracking
+    - navigation.sections
+    - navigation.expand
+    - content.code.copy
+
+markdown_extensions:
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true
+  - admonition
+  - pymdownx.details
+  - tables
+  - toc:
+      permalink: true
+
+nav:
+  - Home: index.md
+  - Security: security.md
+  - Roadmap: roadmap.md
