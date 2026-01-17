@@ -10,8 +10,10 @@ All wallet data is stored in IndexedDB under the database name `plebtap-secure-s
 |------|-------------|
 | `encryptedKey` | Your private key encrypted with your chosen method |
 | `encryptedMnemonic` | Your seed phrase encrypted (if created with mnemonic) |
+| `publicKeyHex` | Your public key hex (unencrypted, for deriving npub when locked) |
 | `authMethod` | Your authentication method (`pin`, `webauthn`, or `none`) |
 | `pinLength` | Your PIN length (4 or 6 digits) |
+| `autoLockSession` | Whether auto-lock is enabled (default: off) |
 | `webauthnCredential` | WebAuthn credential for biometric auth |
 | `webauthnEncryptionKey` | Random key for WebAuthn encryption |
 

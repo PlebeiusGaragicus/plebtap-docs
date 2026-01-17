@@ -94,9 +94,19 @@ All sensitive data is stored in **IndexedDB**, not localStorage:
 When you unlock your wallet:
 
 1. The decrypted key is held **in memory only**
-2. Session expires after **5 minutes** of inactivity
-3. Key is cleared from memory on session timeout
-4. Key is cleared on logout or tab close
+2. Key is cleared on logout or tab close
+3. Key is cleared when you close the browser
+
+### Auto-Lock (Opt-in)
+
+By default, your session stays active until you log out or close the browser. You can enable auto-lock in Settings:
+
+- **When enabled**: Session expires after **5 minutes** of inactivity
+- **When disabled** (default): Session persists until page close
+- Key is always cleared from memory when session ends
+
+!!! tip "Shared Devices"
+    Enable auto-lock if you use PlebTap on a shared or public device.
 
 ## Rate Limiting
 
@@ -105,6 +115,25 @@ To protect against brute-force attacks:
 - **5 failed attempts** triggers a lockout
 - **5-minute lockout** period after max attempts
 - Counter resets after **1 hour** of no attempts
+
+### What Happens During Lockout
+
+When you reach the maximum failed attempts:
+
+1. The PIN input is **disabled** and hidden
+2. A **countdown timer** shows remaining lockout time (e.g., "4:23")
+3. The **Unlock button** is removed
+4. After lockout expires, you can try again with fresh attempts
+
+### Attempts Remaining
+
+After each failed PIN attempt, you'll see how many attempts remain before lockout:
+
+```
+Incorrect PIN. 3 attempts remaining.
+```
+
+This helps you know when to stop and think carefully about your PIN before getting locked out.
 
 ## Recovery
 
