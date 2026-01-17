@@ -22,63 +22,60 @@ When you create or import a wallet, you choose **one** authentication method:
 
 **Best for**: Users with devices that have biometric hardware
 
-### Insecure Storage (None)
+### No Security (Quick Access)
 
 - Your private key is encrypted with a fixed internal key
 - **No authentication required** to access your wallet
 - Wallet auto-unlocks on page load
+- Uses fast encryption parameters for quick access
 
-!!! danger "Development Only"
-    Insecure storage should only be used for testing and development. Your keys can be accessed by anyone with access to your browser.
-
-**Best for**: Development, testing, or throwaway accounts
+**Best for**: Personal devices, quick transactions, or when convenience is prioritized over security
 
 ## How Encryption Works
 
+PlebTap uses **NIP-49** for key encryption, providing interoperability with other Nostr tools.
+
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│                     Key Storage Flow                        │
+│                  NIP-49 Key Storage Flow                    │
 ├─────────────────────────────────────────────────────────────┤
 │                                                             │
 │   PIN Method:                                               │
-│   ┌─────────┐    PBKDF2     ┌──────────────┐               │
-│   │   PIN   │ ───────────►  │ Derived Key  │               │
-│   └─────────┘   600K iter   └──────────────┘               │
-│                                    │                        │
-│                                    ▼                        │
-│   ┌─────────────┐  AES-256-GCM  ┌──────────────────────┐   │
-│   │ Private Key │ ────────────► │ Encrypted Key Blob   │   │
-│   └─────────────┘               │ (stored in IndexedDB)│   │
-│                                 └──────────────────────┘   │
+│   ┌─────────┐     scrypt      ┌──────────────┐             │
+│   │   PIN   │ ──────────────► │ Derived Key  │             │
+│   └─────────┘   log_n=16      └──────────────┘             │
+│                                      │                      │
+│                                      ▼                      │
+│   ┌─────────────┐  XChaCha20   ┌────────────────────────┐  │
+│   │ Private Key │ ───────────► │ ncryptsec1... string   │  │
+│   └─────────────┘   Poly1305   │ (stored in IndexedDB)  │  │
+│                                └────────────────────────┘  │
 │                                                             │
 │   WebAuthn Method:                                          │
-│   ┌─────────────────┐           ┌──────────────┐           │
-│   │ Random 256-bit  │           │ Derived Key  │           │
-│   │      Key        │ ────────► │ (from random)│           │
-│   └─────────────────┘           └──────────────┘           │
-│          │                             │                    │
-│          │                             ▼                    │
-│          │              ┌──────────────────────┐           │
-│          │              │ Encrypted Key Blob   │           │
-│          │              │ (stored in IndexedDB)│           │
-│          │              └──────────────────────┘           │
-│          │                                                  │
+│   ┌─────────────────┐                                      │
+│   │ Random password │ ──► scrypt ──► XChaCha20-Poly1305   │
+│   │  (256-bit)      │                                      │
+│   └─────────────────┘                                      │
+│          │                     ┌────────────────────────┐  │
+│          │                     │ ncryptsec1... string   │  │
+│          │                     │ (stored in IndexedDB)  │  │
+│          │                     └────────────────────────┘  │
 │          ▼                                                  │
 │   ┌──────────────────────────────────┐                     │
-│   │ Random key stored in IndexedDB   │                     │
+│   │ Random password in IndexedDB     │                     │
 │   │ (accessible after WebAuthn OK)   │                     │
 │   └──────────────────────────────────┘                     │
 │                                                             │
 └─────────────────────────────────────────────────────────────┘
 ```
 
-### Encryption Details
+### Encryption Details (NIP-49)
 
 | Component | Algorithm | Parameters |
 |-----------|-----------|------------|
-| Key Derivation | PBKDF2-SHA256 | 600,000 iterations |
-| Encryption | AES-256-GCM | 256-bit key, 96-bit IV |
-| PIN Hash | PBKDF2-SHA256 | 100,000 iterations |
+| Key Derivation | scrypt | log_n=16, r=8, p=1 |
+| Encryption | XChaCha20-Poly1305 | 256-bit key, 192-bit nonce |
+| Output Format | Bech32 | `ncryptsec1...` (keys), `ncryptmnem1...` (mnemonics) |
 
 ## Storage
 
@@ -154,8 +151,8 @@ Your wallet can always be recovered using your **seed phrase** (mnemonic):
 | Threat | Protection |
 |--------|------------|
 | Casual device access | PIN/Biometric required to unlock |
-| Key theft from storage | AES-256-GCM encryption |
-| PIN brute force | PBKDF2 + rate limiting |
+| Key theft from storage | NIP-49 encryption (scrypt + XChaCha20-Poly1305) |
+| PIN brute force | scrypt memory-hard KDF + rate limiting |
 | Replay attacks | WebAuthn counter verification |
 | Memory scraping | Session timeout + key clearing |
 

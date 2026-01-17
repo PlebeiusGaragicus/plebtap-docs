@@ -17,34 +17,26 @@ All wallet data is stored in IndexedDB under the database name `plebtap-secure-s
 | `webauthnCredential` | WebAuthn credential for biometric auth |
 | `webauthnEncryptionKey` | Random key for WebAuthn encryption |
 
-## Encryption Format
+## Encryption Format (NIP-49)
 
-Encrypted data follows this structure:
+PlebTap uses **NIP-49** for key encryption, producing standard Bech32-encoded strings:
 
-```json
-{
-  "version": "plebtap-v1",
-  "algorithm": "aes-256-gcm",
-  "salt": "<base64>",
-  "iv": "<base64>",
-  "ciphertext": "<base64>",
-  "kdfParams": {
-    "iterations": 600000,
-    "algorithm": "PBKDF2-SHA256"
-  },
-  "createdAt": 1704067200000
-}
-```
+| Data Type | Format | Example |
+|-----------|--------|---------|
+| Private Key | `ncryptsec1...` | Encrypted with password via scrypt + XChaCha20-Poly1305 |
+| Mnemonic | `ncryptmnem1...` | Same encryption, custom prefix for seed phrases |
+
+This format is interoperable with other Nostr tools that support NIP-49.
 
 ## Key Derivation
 
-For PIN-based encryption, the encryption key is derived using PBKDF2:
+For PIN-based encryption:
 
 ```
-PIN → PBKDF2-SHA256 (600,000 iterations) → 256-bit AES key
+PIN → scrypt (log_n=16, r=8, p=1) → 256-bit key → XChaCha20-Poly1305
 ```
 
-For WebAuthn, a random 256-bit key is generated and stored (only accessible after biometric verification).
+For WebAuthn, a random 256-bit password is generated and used with the same NIP-49 encryption. The password is stored in IndexedDB and only accessible after biometric verification.
 
 ## Wallet States
 
@@ -71,8 +63,9 @@ When you create a new account with a seed phrase:
 
 From Settings > Keys, you can export:
 
-- **npub**: Your public key (safe to share)
-- **nsec**: Your private key (keep secret!)
+- **npub**: Your public key in Bech32 format (safe to share)
+- **nsec**: Your private key in Bech32 format (keep secret!)
+- **hex**: Your private key in raw hexadecimal format
 - **Mnemonic**: Your seed phrase (if stored)
 
 !!! tip "Backup Before Export"

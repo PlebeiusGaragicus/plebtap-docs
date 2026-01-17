@@ -8,11 +8,11 @@ Upcoming features and improvements for PlebTap.
 
 - [x] Basic Nostr authentication (NIP-07, private key, mnemonic)
 - [x] Cashu ecash wallet integration
-- [x] PIN-based key encryption
+- [x] NIP-49 key encryption (scrypt + XChaCha20-Poly1305)
+- [x] PIN-based authentication (4 or 6-digit)
 - [x] WebAuthn biometric authentication
-- [x] Insecure storage option for development
-- [x] 4 or 6-digit PIN selection
-- [x] Mnemonic export from settings
+- [x] Quick access mode (no security)
+- [x] Mnemonic and private key export (nsec + hex)
 - [x] NIP-06 key derivation from seed phrases
 
 ## Planned Features
@@ -21,7 +21,7 @@ Upcoming features and improvements for PlebTap.
 
 - [ ] Change PIN functionality
 - [ ] Switch authentication method
-- [ ] Device linking (NIP-49)
+- [ ] Device linking via QR code
 - [ ] Session timeout configuration
 
 ### v0.3.x - Wallet Features

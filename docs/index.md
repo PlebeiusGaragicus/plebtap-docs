@@ -12,7 +12,7 @@ PlebTap is a Bitcoin Lightning and Ecash wallet integrated with Nostr for decent
 ## Quick Start
 
 1. **Create or Import Keys**: Generate a new Nostr identity or import an existing seed phrase/nsec
-2. **Secure Your Wallet**: Choose PIN, biometric, or skip security for development
+2. **Secure Your Wallet**: Choose PIN, biometric, or skip security for quick access
 3. **Add Funds**: Receive ecash tokens or connect a Lightning wallet
 4. **Start Transacting**: Send payments, receive tokens, and interact with the Nostr ecosystem
 
@@ -22,7 +22,7 @@ PlebTap is a Bitcoin Lightning and Ecash wallet integrated with Nostr for decent
 |--------|---------------|----------|
 | **PIN (4 or 6 digit)** | Medium-High | Most users |
 | **Biometric (WebAuthn)** | High | Devices with Face ID/Touch ID |
-| **Insecure (None)** | None | Development/testing only |
+| **No Security** | Quick Access | Personal devices, convenience-first use cases |
 
 ## Architecture
 
@@ -31,8 +31,8 @@ PlebTap is built with:
 - **Svelte 5** with runes for reactive state management
 - **NDK (Nostr Development Kit)** for Nostr protocol interactions
 - **Cashu** for ecash token management
-- **IndexedDB** for secure encrypted storage
-- **Web Crypto API** (AES-256-GCM) for encryption
+- **IndexedDB** for encrypted storage
+- **NIP-49** (scrypt + XChaCha20-Poly1305) for key encryption
 - **WebAuthn** for biometric authentication
 
 ## Documentation
